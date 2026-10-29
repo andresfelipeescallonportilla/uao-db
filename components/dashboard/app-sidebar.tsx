@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LayoutGridIcon, TableIcon } from "lucide-react"
 import { TABLES } from "@/lib/tables"
-import { isSupabaseConfigured } from "@/lib/supabase/client"
+import { useDatabaseHealth } from "@/hooks/use-table-data"
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +18,37 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+
+const STATUS_STYLES = {
+  connected: "bg-emerald-500",
+  not_configured: "bg-amber-500",
+  error: "bg-destructive",
+  loading: "bg-muted-foreground/40",
+} as const
+
+function ConnectionStatus() {
+  const { data } = useDatabaseHealth()
+  const status = data?.status ?? "loading"
+  const label =
+    data?.status === "connected"
+      ? `Conectado a ${data.database}`
+      : status === "not_configured"
+        ? "Base de datos sin configurar"
+        : status === "error"
+          ? "Sin conexión a la base de datos"
+          : "Comprobando conexión…"
+
+  return (
+    <div
+      className="flex items-center gap-2 px-2 py-1.5 text-xs text-muted-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
+      role="status"
+      title={label}
+    >
+      <span className={`size-2 shrink-0 rounded-full ${STATUS_STYLES[status]}`} aria-hidden="true" />
+      <span className="truncate group-data-[collapsible=icon]:sr-only">{label}</span>
+    </div>
+  )
+}
 
 export function AppSidebar() {
   const pathname = usePathname()
@@ -83,19 +114,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
-        <div className="flex items-center gap-2 px-2 py-1.5 text-xs text-muted-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
-          <span
-            className={
-              isSupabaseConfigured
-                ? "size-2 shrink-0 rounded-full bg-emerald-500"
-                : "size-2 shrink-0 rounded-full bg-amber-500"
-            }
-            aria-hidden="true"
-          />
-          <span className="group-data-[collapsible=icon]:hidden">
-            {isSupabaseConfigured ? "Supabase conectado" : "Supabase sin configurar"}
-          </span>
-        </div>
+        <ConnectionStatus />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

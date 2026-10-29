@@ -31,12 +31,12 @@ export function NotConfiguredMessage() {
   return (
     <StateMessage
       icon={DatabaseZapIcon}
-      title="Conecta tu proyecto de Supabase"
+      title="Conecta tu base de datos"
       description={
         <>
-          Define <code className="font-mono text-foreground">NEXT_PUBLIC_SUPABASE_URL</code> y{" "}
-          <code className="font-mono text-foreground">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> en las
-          variables de entorno para empezar a explorar tus tablas.
+          Define <code className="font-mono text-foreground">DATABASE_URL</code> en el archivo{" "}
+          <code className="font-mono text-foreground">.env.local</code> con la cadena de conexión
+          de tu PostgreSQL y reinicia el servidor.
         </>
       }
     />

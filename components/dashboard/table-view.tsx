@@ -2,8 +2,7 @@
 
 import { AlertTriangleIcon, InfoIcon, RefreshCwIcon } from "lucide-react"
 import { getTableConfig } from "@/lib/tables"
-import { isSupabaseConfigured } from "@/lib/supabase/client"
-import { MAX_ROWS, useTableData } from "@/hooks/use-table-data"
+import { MAX_ROWS, isNotConfigured, useTableData } from "@/hooks/use-table-data"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -33,6 +32,7 @@ export function TableView({ tableName }: { tableName: string }) {
 
   if (!config) return null
   const Icon = config.icon
+  const notConfigured = isNotConfigured(error)
   const isTruncated = data ? data.total > data.rows.length : false
 
   return (
@@ -52,7 +52,7 @@ export function TableView({ tableName }: { tableName: string }) {
             <p className="text-sm text-muted-foreground">{config.description}</p>
           </div>
         </div>
-        {isSupabaseConfigured && (
+        {!notConfigured && (
           <Button
             variant="outline"
             size="sm"
@@ -65,7 +65,7 @@ export function TableView({ tableName }: { tableName: string }) {
         )}
       </div>
 
-      {!isSupabaseConfigured ? (
+      {notConfigured ? (
         <NotConfiguredMessage />
       ) : isLoading ? (
         <TableSkeleton />
@@ -96,7 +96,7 @@ export function TableView({ tableName }: { tableName: string }) {
         <StateMessage
           icon={InfoIcon}
           title="Tabla vacía"
-          description="Esta tabla no tiene registros visibles con las credenciales actuales."
+          description="Esta tabla no tiene registros."
         />
       )}
     </div>

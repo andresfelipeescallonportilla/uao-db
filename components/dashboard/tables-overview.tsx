@@ -3,8 +3,7 @@
 import Link from "next/link"
 import { ArrowUpRightIcon } from "lucide-react"
 import { TABLES, type TableConfig } from "@/lib/tables"
-import { isSupabaseConfigured } from "@/lib/supabase/client"
-import { useTableCount } from "@/hooks/use-table-data"
+import { useDatabaseHealth, useTableCount } from "@/hooks/use-table-data"
 import { Skeleton } from "@/components/ui/skeleton"
 import { NotConfiguredMessage } from "@/components/dashboard/state-message"
 
@@ -44,6 +43,8 @@ function TableCard({ table }: { table: TableConfig }) {
 }
 
 export function TablesOverview() {
+  const { data: health } = useDatabaseHealth()
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
@@ -52,7 +53,7 @@ export function TablesOverview() {
           Selecciona una tabla para explorar sus registros.
         </p>
       </div>
-      {isSupabaseConfigured ? (
+      {health?.status !== "not_configured" ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {TABLES.map((table) => (
             <TableCard key={table.name} table={table} />
