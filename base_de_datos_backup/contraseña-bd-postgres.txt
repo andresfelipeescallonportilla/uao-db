@@ -1,0 +1,3 @@
+contraseña de superusuario:postgres
+puerto:5432
+servidor:localhost
